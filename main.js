@@ -87,6 +87,7 @@ bot.on("message", async (msg) => {
       const compressedBuffer = await sharp(buffer)
         .resize({ width: 512, fit: "contain", withoutEnlargement: true })
         .png({ quality: 80 })
+        .apk()
         .toBuffer();
 
       const fileUrl = await uploadBuffer(compressedBuffer, newFilename, msg.document.mime_type);
