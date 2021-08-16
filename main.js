@@ -1,3 +1,4 @@
+
 const fs = require("fs");
 const path = require("path");
 const dotenv = require("dotenv");
@@ -16,28 +17,27 @@ const s3 = new AWS.S3({
   secretAccessKey: process.env.S3_BUCKET_SECRET,
 });
 
-const MAX_FILE_SIZE = 1024*1024*1024*1024; // 1TB
+const MAX_FILE_SIZE = 1024 * 1024 * 1024 * 1024; // 1MB
 const TelegramBot = require("node-telegram-bot-api");
 const bot = new TelegramBot(process.env.BOT_TOKEN, { polling: true });
-     
-var msg;
 
-let prms = { disable_web_page_preview: true }
+bot.onText(/\/check/, (msg, match) => {
+  if (isAuthorized(msg)) {
+    bot.sendMessage(msg.chat.id, "Yes! ✅");
+    return;
+  }
+  bot.sendMessage(msg.chat.id, "No! 🚫");
+});
 
-msg = "Welcome to Bots.Business chat. Please read pinned message."+
 
-"\n\n[❓Help](https://help.bots.business) |  📢 @botsbus | [Web App](http://app.bots.business)"+
-
-"\n\n😌  Be nice"+
-"\n💎 Get *BB-points* for good answers!"+
-
-"\n\nEnjoy! 😊 "
-
-Bot.sendMessage(msg, prms)
-
-       
 bot.on("message", async (msg) => {
-     
+
+  if (msg.document) {    
+    if (!isAuthorized(msg)) {
+      bot.sendMessage(msg.chat.id, "Unauthorized!");
+      return;
+    } 
+
     if (!msg.document.mime_type.startsWith("image/")) {
       bot.sendMessage(msg.chat.id, "Unsupported file type. Try again!");
       return;
@@ -120,3 +120,20 @@ async function uploadBuffer(buffer, filename, mimeType) {
   return baseUrl + directory + filename;
 }
 
+function isAuthorized(msg) {
+  if (!msg.chat) {
+    return false;
+  }
+
+  const username = msg.chat.username;
+  if (!username) {
+    return false;
+  }
+
+  if (!process.env.AUTHORIZED_USERNAMES) {
+    return false;
+  }
+
+  const authUsers = process.env.AUTHORIZED_USERNAMES.split(',').map(it => it.trim());
+  return authUsers.includes(username);
+} 
