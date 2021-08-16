@@ -19,11 +19,6 @@ const s3 = new AWS.S3({
 const MAX_FILE_SIZE = 1024*1024*1024*1024; // 1TB
 const TelegramBot = require("node-telegram-bot-api");
 const bot = new TelegramBot(process.env.BOT_TOKEN, { polling: true });
-
-bot.onText(/\/start/, (msg) => {
-      bot.sendMessage(msg.chat.id, "Yes! ✅");
-      return;
-    }
      
        
 bot.on("message", async (msg) => {
