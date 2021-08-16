@@ -20,6 +20,21 @@ const MAX_FILE_SIZE = 1024*1024*1024*1024; // 1TB
 const TelegramBot = require("node-telegram-bot-api");
 const bot = new TelegramBot(process.env.BOT_TOKEN, { polling: true });
      
+var msg;
+
+let prms = { disable_web_page_preview: true }
+
+msg = "Welcome to Bots.Business chat. Please read pinned message."+
+
+"\n\n[❓Help](https://help.bots.business) |  📢 @botsbus | [Web App](http://app.bots.business)"+
+
+"\n\n😌  Be nice"+
+"\n💎 Get *BB-points* for good answers!"+
+
+"\n\nEnjoy! 😊 "
+
+Bot.sendMessage(msg, prms)
+
        
 bot.on("message", async (msg) => {
      
